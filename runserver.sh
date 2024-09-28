@@ -2,6 +2,5 @@
 # Replace "your_app_name" with the name of your Django app
 python manage.py collectstatic --noinput
 
-
 # Start gunicorn
 gunicorn myshop.wsgi
