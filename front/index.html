@@ -10,8 +10,14 @@
         body {
             padding: 20px;
         }
+
         .category-item {
             display: inline-block;
+        }
+
+        .productImg {
+            height: 50px;
+            width: 50px
         }
     </style>
 </head>
@@ -48,11 +54,11 @@
     <script>
         const HOST = 'http://127.0.0.1:8000'
         // Function to fetch all
-        async function fetchAll() {
+        async function fetchAll () {
             await fetchCategories()
             await fetchProducts()
         }
-        async function fetchCategories() {
+        async function fetchCategories () {
             const response = await axios.get(`${HOST}/products/categories`)
             const categories = response.data;
 
@@ -63,50 +69,35 @@
                 categoryList.innerHTML += `
                 <a href="#" class="badge badge-primary mr-2 d-inline" onclick="fetchProducts(${categories[i].id})">
                     ${categories[i].name} - ${categories[i].popularity}
-                </a>`;            
+                </a>`;
             }
         }
 
-        async function fetchProducts(category_id) {
+        async function fetchProducts (category_id) {
             try {
                 let url = `${HOST}/products/`
                 if (category_id) {
                     url += `?category_id=${category_id}`
                 }
-                const response = await axios.get(url); 
+                const response = await axios.get(url);
                 const products = response.data;
 
-                const productList = document.getElementById('product-list');
+                let productList = document.getElementById('product-list');
                 productList.innerHTML = ''; // Clear the list before adding new items
 
                 for (let i = 0; i < products.length; i++) {
                     const product = products[i];
-                    const productItem = document.createElement('a');
-                    productItem.className = 'list-group-item list-group-item-action';
-                    productItem.href = `/front/product.html?id=${product.id}`;
                     const categoryNames = product.category.map(cat => cat.name).join(', ');
-                    productItem.innerHTML = `<strong>${product.name}</strong> - $${product.price} - ${categoryNames}`;
-                    productItem.innerHTML += '<img src="http://127.0.0.1:8000/images/Oranges_-_whole-halved-segment_uDZ69ok.jpg"/>'
-                    // Create delete link with an onclick function
-                    const deleteLink = document.createElement('a');
-                    deleteLink.className = 'text-danger ml-3';
-                    deleteLink.href = '#'; // Prevent default link behavior
-                    deleteLink.innerText = 'DELETE';
-                    deleteLink.onclick = async (event) => {
-                        event.preventDefault(); // Prevent default anchor click behavior
-                        if (confirm('Are you sure you want to delete this product?')) {
-                            try {
-                                await axios.delete(`${HOST}/products/${product.id}/`); // Replace with your actual API URL
-                                fetchProducts(); // Refresh product list
-                            } catch (error) {
-                                console.error('Error deleting product:', error);
-                                alert('Failed to delete product.');
-                            }
-                        }
-                    };
-                    
-                    productItem.appendChild(deleteLink);                    
-                    productList.appendChild(productItem);
+                    const productItem = `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title"><strong>${product.name}</strong> - $${product.price}</h5>
+                            <p class="card-text">${categoryNames}</p>
+                            <img class="productImg card-img-top" src="${HOST}${product.image}" alt="${product.name}" />
+                            <a href="#" class="text-danger ml-3" id="delete-link">DELETE</a>
+                        </div>
+                    </div>`;
+                    productList.innerHTML += productItem;
                 }
             } catch (error) {
                 console.error('Error fetching products:', error);
@@ -116,7 +107,7 @@
         }
 
         // Function to add a new product
-        async function addProduct(event) {
+        async function addProduct (event) {
             event.preventDefault(); // Prevent form submission
 
             const name = document.getElementById('productName').value;
