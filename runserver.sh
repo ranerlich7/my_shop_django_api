@@ -4,4 +4,4 @@ python manage.py collectstatic --noinput
 
 
 # Start gunicorn
-gunicorn flights_website.wsgi
+gunicorn myshop.wsgi
