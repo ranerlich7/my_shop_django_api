@@ -31,8 +31,11 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = ['my-shop-2024.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://my-shop-2024.onrender.com']
+CORS_ALLOWED_ORIGINS = [
+    'https://my-shop-2024.onrender.com',
+]
 
 # Application definition
 
